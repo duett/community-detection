@@ -1,4 +1,17 @@
-community-detectiion
+community-detection
 ====================
 
-Community Detection algorithm based on Reichardt J, Bornholdt S.(2006) Statistical mechanics of community detection. Phys. Rev. E 74: 016110 
+Community Detection algorithm based on 
+	
+	Reichardt J, Bornholdt S.(2006) Statistical mechanics of community detection. Phys. Rev. E 74: 016110 
+	
+Initially, the simulation will use the sample data file
+	
+	email_Enron.txt
+	
+taken from the [Stanford Large Network Dataset Collection](http://snap.stanford.edu/data/).
+
+
+
+
+
