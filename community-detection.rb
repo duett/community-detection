@@ -1,5 +1,16 @@
 #from http://www.informit.com/articles/article.aspx?p=26943&seqNum=6
 
+
+file = File.new(file_name, "r")
+while (line = file.gets)
+	if line[0].chr!="#"
+		test.edges =  line.split("\t")
+	end
+end
+file.close
+
+
+
 class LowerMatrix < TriMatrix
 
   def initialize
