@@ -10,20 +10,22 @@ ALPHA		= 0.95
 
 
 class State < Network
-	attr_accessor :energy, 
-	
-	def self neighbor_state
-		pick_id 	= rand(@nodes.size)
-		begin 
-			new_spin	= rand(@q)
-		end while @nodes[pick_id].spin == new_spin
-		@nodes[pick_id].spin = new_spin
-	end
+	attr_accessor :energy 
 	# energy calculates engery of state
 	# neighbor gives random neighboring state (i.e. 1 spin turned)
 	def initialize(file_name, q)
 		super(file_name,q)
 	end
+end
+
+def neighbor_state(state)
+	out = state 
+	pick_id 	= rand(out.nodes.size)
+	begin 
+		new_spin	= rand(out.q)
+	end while out.nodes[pick_id].spin == new_spin
+	out.nodes[pick_id].spin = new_spin
+
 end
 
 
@@ -45,13 +47,11 @@ def simulated_annealing( initial,
 		max_energy 		= MAX_ENERGY,
 		temp			= temp(alpha),
 		distribution   	= method(:boltzmann))
-		t  				= 0
-		t_after_restart = 0
+	t  				= 0
+	t_after_restart = 0
 	current	= initial
 	best	= current
-
 	while  t < time_max && current.energy > max_energy
-		
 		current = if rand < prob_restart
 			t_after_restart = 0
 			current.lottery()
@@ -65,11 +65,5 @@ def simulated_annealing( initial,
 			best = current
 		end
 		t += 1
-
 	end
-
-
-
-
-
 end
