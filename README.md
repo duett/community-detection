@@ -1,6 +1,11 @@
 community-detection
 ====================
 
+An overview of this topic can be found in a book chapter by Santo Fortonate which serves as an [overview](http://arxiv.org/pdf/0906.0612v2.pdf)
+
+	Fortunato S (2010) Book chapter: Community detection in graphs Physics Reports Volume 486, Issues 3–5, Pages 75–174
+
+
 Community Detection algorithm based on 
 	
 	Reichardt J, Bornholdt S.(2006) Statistical mechanics of community detection. Phys. Rev. E 74: 016110 
