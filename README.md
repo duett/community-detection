@@ -22,3 +22,11 @@ taken from the [Stanford Large Network Dataset Collection](http://snap.stanford.
 
 
 
+
+------
+Markus Düttmann
+
+
+
+
+

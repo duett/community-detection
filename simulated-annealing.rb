@@ -16,6 +16,23 @@ class State < Network
 	def initialize(file_name, q)
 		super(file_name,q)
 	end
+	# in the Potts-model of Reichard/Bornholdt the adhesion is needed 
+	# to calculate the energy difference (for def see paper in README.md)
+	# case used: every links is equally probable p
+	def adhesion(r,s,p,gamma)
+		m_rs = 0
+		m_rs_av = gamma*p*@groups[r].size*@groups[s].size
+		@groups[r].each do |node_i| 
+			@groups[s].each do |node_j|
+				if @adjacency[node_i][node_j] == 1
+					m_rs +=1
+				end
+			end
+		end
+		return m_rs - m_rs_av
+	end
+
+
 end
 
 def neighbor_state(state)
@@ -26,6 +43,8 @@ def neighbor_state(state)
 	end while out.nodes[pick_id].spin == new_spin
 	out.nodes[pick_id].spin = new_spin
 
+	##HERE ENERGY UPDATE
+	return out
 end
 
 
