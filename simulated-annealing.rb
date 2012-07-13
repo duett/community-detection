@@ -7,32 +7,20 @@ PROB_RESTART=0.001
 TIME_MAX	= 3000
 MAX_ENERGY	= 0
 ALPHA		= 0.95
-
+GAMMA 		= 1
+NULL_P 		= 0.01
 
 class State < Network
 	attr_accessor :energy 
 	# energy calculates engery of state
 	# neighbor gives random neighboring state (i.e. 1 spin turned)
-	def initialize(file_name, q)
+	def initialize(file_name, q, gamma,p)
 		super(file_name,q)
+		@energy =  @edges.inject{|result,link| result = result - (1-gamma*p) }
 	end
 	# in the Potts-model of Reichard/Bornholdt the adhesion is needed 
 	# to calculate the energy difference (for def see paper in README.md)
 	# case used: every links is equally probable p
-	def adhesion(r,s,p,gamma)
-		m_rs = 0
-		m_rs_av = gamma*p*@groups[r].size*@groups[s].size
-		@groups[r].each do |node_i| 
-			@groups[s].each do |node_j|
-				if @adjacency[node_i][node_j] == 1
-					m_rs +=1
-				end
-			end
-		end
-		return m_rs - m_rs_av
-	end
-
-
 end
 
 def neighbor_state(state)
@@ -44,9 +32,22 @@ def neighbor_state(state)
 	out.nodes[pick_id].spin = new_spin
 
 	##HERE ENERGY UPDATE
-	return out
+	return out,pick_id
 end
 
+## DEFINITION OF ADHESION HAS TO BE ADAPTED
+def adhesion(state,r,s,p,gamma)
+	m_rs = 0
+	m_rs_av = gamma*p*@groups[r].size*state.groups[s].size
+	state.groups[r].each do |node_i| 
+		state.groups[s].each do |node_j|
+			if state.adjacency[node_i][node_j] == 1
+				m_rs +=1
+			end
+		end
+	end
+	return m_rs - m_rs_av
+end
 
 # assumption: exponential cooling schedule
 def temp(alpha)
