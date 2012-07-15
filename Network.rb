@@ -20,9 +20,9 @@ class Network
 	def initialize(file_name, q)
 		@nodes 		= []
 		@edges 		= []
-		@neighbors 	= []
+		@neighbors 	= []				## list of neighbours
 		@groups 	= Array.new(q){[]}
-		@q 			= q
+		@q 			= q					## number of groups
 		file = File.new(file_name, "r")
 		while (line = file.gets)
 			if line[0].chr!="#"

@@ -26,7 +26,7 @@ taken from the [Stanford Large Network Dataset Collection](http://snap.stanford.
 
 ###Known Issues
 
-- energy update still incomplete
+- If spin changes, @groups has to be updated as well
 - network visualization still missing
 
 
