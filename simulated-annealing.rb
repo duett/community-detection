@@ -4,11 +4,11 @@ require "Network"
 # Initial values
 TEST		=true
 PROB_RESTART=0.001
-TIME_MAX	= 3000
+TIME_MAX	= 30000
 MAX_ENERGY	= 0
 ALPHA		= 0.95
 GAMMA 		= 1
-NULL_P 		= 0.01
+NULL_P 		= 0.1
 
 class State < Network
 	attr_accessor :energy, :p, :gamma
@@ -42,6 +42,8 @@ class State < Network
 		a_l_alpha = a_l_alpha - @gamma*@p*(@group[new_spin])
 
 		@energy = @energy + a_l_phi - a_l_alpha
+		@groups[old_spin].drop(pick_id)
+		@groups[new_spin] << pick_id
 	end
 
 end
