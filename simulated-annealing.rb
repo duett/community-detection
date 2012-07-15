@@ -16,7 +16,7 @@ class State < Network
 	# neighbor gives random neighboring state (i.e. 1 spin turned)
 	def initialize(file_name, q, gamma,p)
 		super(file_name,q)
-		@energy =  @edges.inject{|result,link| result = result - (1-gamma*p) }
+		@energy =  @edges.inject{|result,link| result = result - (@adjacency[link.node1][link.node2]-gamma*p) }
 	end
 	# in the Potts-model of Reichard/Bornholdt the adhesion is needed 
 	# to calculate the energy difference (for def see paper in README.md)
