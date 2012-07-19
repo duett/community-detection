@@ -7,7 +7,7 @@ class Node
 end
 
 class Link
-	attr_accessor :id, :node1, :node2
+	attr_accessor :node1, :node2
 	def initialize(node1,node2)
 		@node1 = node1
 		@node2 = node2
@@ -31,7 +31,7 @@ class Network
 				if @nodes.size == 0 || @nodes[-1].id != a[0].to_i
 					@nodes << Node.new(a[0].to_i,rand(@q))
 				end
-				@edges << Link.new(a[0].to_i,a[1].to_i)
+				@edges << Link.new( a[0].to_i, a[1].to_i)
 				@neighbors[a[1].to_i] = []
 			end
 		end
@@ -49,14 +49,7 @@ class Network
 		end
 
 	end
-	def self.lottery()
-		@groups 	= Array.new(q){[]}
-		@nodes.each do |node| 
-			node.spin = rand(@q)
-			@groups[node.spin] << node.id
-		end
-
-	end
+	
 
 end
 

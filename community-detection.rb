@@ -1,25 +1,16 @@
 require "network"
 require "simulated-annealing"
 
-test = State.new("test_network.txt",3, 1)
-#puts test.energy
+test = State.new("test_network.txt",2, 1)
 
 
-test.neighbor_state()
-#puts test.energy
 
-#puts test.energy
-simulated_annealing(test)
+simulated_annealing(test, distribution = method(:boltzmann), time_max = 300,  prob_restart = 0.000)
 
 
-#test.nodes.each do |node|
-	#puts "#{node.id} : #{node.spin} : "
-#end
-#	puts "---"
-#	puts test.groups[0]
-#	puts "---"
-#	puts test.groups[1]
-#	puts "---"
-#	puts test.groups[2]
-#	puts "---"
-#	puts test.groups[3]
+test.groups.each do |list|
+	list.sort!
+	puts list
+	puts "++++"
+end
+
