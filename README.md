@@ -28,6 +28,7 @@ taken from the [Stanford Large Network Dataset Collection](http://snap.stanford.
 
 - If spin changes, @groups has to be updated as well
 - network visualization still missing
+- This is a program written to learn about specific things in ruby so its not yet made for reproduction ;)
 
 
 

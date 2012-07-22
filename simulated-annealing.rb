@@ -1,4 +1,4 @@
-require "Network"
+require "network"
 
 
 # Initial values
@@ -6,7 +6,7 @@ TEST		=true
 PROB_RESTART=0
 TIME_MAX	= 300000
 MAX_ENERGY	= -100000
-ALPHA		= 0.99
+ALPHA		= 0.999
 GAMMA 		= 1
 NULL_P 		= 0.1
 
@@ -19,10 +19,6 @@ class State < Network
 		@p = @edges.size/@nodes.size
 		@gamma = gamma
 		@energy = 0
-		@groups.each do |list|
-			
-		end
-		
 		@edges.each do |link|
 			if  link.node1 < link.node2 && @nodes[link.node1].spin == @nodes[link.node2].spin 
 				@energy -= 2*(@adjacency[link.node1][link.node2]-@gamma*@p) 
@@ -30,44 +26,40 @@ class State < Network
 		end
 
 	end
-	def neighbor_state()
+	def neighbor_energy_diff
 		rand_id = rand(@nodes.size)
 		old_spin = @nodes[rand_id].spin
 		begin 
 			new_spin	= rand(@q)
 		end while @nodes[rand_id].spin == new_spin
-		@nodes[rand_id].spin = new_spin
-
-		## energy update
-		## calculate adhesions: null model = links established with equal probability p
-	#	a_l_phi = @groups[old_spin].inject{|result, element| result + @adjacency[rand_id][element]}
-	#	a_l_phi = a_l_phi - @gamma*@p*(@groups[old_spin].size-1)
-	#	a_l_alpha = 0
-	#	@groups[new_spin].each do |i| 
-	#		a_l_alpha += @adjacency[rand_id][i]
-	#	end
-	#	a_l_alpha -= @gamma*@p*(@groups[new_spin].size)
-
-		#@energy += a_l_phi - a_l_alpha
-	#	@groups[old_spin].each do |members| 
-	#		@neighbors[members].delete(rand_id)
-	#	end
-	#	@groups[new_spin].each do |members| 
-	#		@neighbors[members] << rand_id
-	#	end
-		@groups[old_spin].delete(rand_id)
-		@groups[new_spin] << rand_id
-		@energy = 0
-		@edges.each do |link|
-			if  link.node1 < link.node2 && @nodes[link.node1].spin == @nodes[link.node2].spin 
-				@energy -= 2*(@adjacency[link.node1][link.node2]-@gamma*@p) 
+		dE = 0
+		@groups[old_spin].each do |member|
+			if @adjacency[member][rand_id] == 1 && member != rand_id
+				dE+=1
 			end
 		end
+		dE-= @gamma*@p*(@groups[old_spin].size - 1)
+
+		@groups[new_spin].each do |member|
+			if @adjacency[member][rand_id] == 1 && member != rand_id
+				dE+=1
+			end
+		end
+		dE+= @gamma*@p*@groups[new_spin].size 
+		Hash["rand_id",rand_id,"new_spin", new_spin, "dE", dE]
+	end
+
+	def neighbor_state(rand_id,new_spin,dE)
+		@energy += dE
+		old_spin = @nodes[rand_id].spin
+		@nodes[rand_id].spin = new_spin
+		@groups[old_spin].delete(rand_id)
+		@groups[new_spin] << rand_id
 
 
 	end
 	
-	def lottery()
+	def lottery
 		@groups 	= Array.new(q){[]}
 		@nodes.each do |node| 
 			node.spin =rand(@q)
@@ -79,6 +71,7 @@ class State < Network
 				@energy -= 2*(@adjacency[link.node1][link.node2]-@gamma*@p) 
 			end
 		end
+
 
 	end
 
@@ -97,10 +90,8 @@ def temp(alpha)
 end
 
 # assumption: boltzmann-distribution
-def boltzmann(e, e_new, temp)
-  return 1 if e_new > e
-  Math.exp((e_new-e) * (1.0 - temp))
-  
+def boltzmann(dE, temp)
+  return  dE < 0 ? 1 :   -Math.exp(dE *(1-temp))
 end
 
 def simulated_annealing( initial,
@@ -113,21 +104,29 @@ def simulated_annealing( initial,
 	t  				= 0
 	t_after_restart = 0
 	current			= initial
-
-	best			= current
+	best			= current.clone
+	
 	while  t < time_max
-		new_state  = current.clone
-		new_state.neighbor_state()
+
+		update = current.neighbor_energy_diff
+#		puts " #{update['rand_id']} : #{update['new_spin']} : #{update['dE']}"
 		tmp = temperature.call(t)
-		if distribution.call(current.energy, new_state.energy, tmp) > rand
-			current = new_state.clone
+		if distribution.call(update["dE"], tmp) > rand
+			current.neighbor_state(update["rand_id"],update["new_spin"],update["dE"])
+			puts update["dE"]
 		end
 		if current.energy < best.energy
-			best = current.clone
+			best = Marshal::load(Marshal.dump(current))
 		end
 
 		t += 1
+		t_after_restart += 1
+		if TEST 
+		#	puts current.energy
+		end
 	end
+	current
 end
+
 
 

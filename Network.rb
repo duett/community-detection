@@ -20,7 +20,6 @@ class Network
 	def initialize(file_name, q)
 		@nodes 		= []
 		@edges 		= []
-		@neighbors 	= []				## list of neighbours
 		@groups 	= Array.new(q){[]}
 		@q 			= q					## number of groups
 		file = File.new(file_name, "r")
@@ -32,22 +31,19 @@ class Network
 					@nodes << Node.new(a[0].to_i,rand(@q))
 				end
 				@edges << Link.new( a[0].to_i, a[1].to_i)
-				@neighbors[a[1].to_i] = []
 			end
 		end
-	#	@nodes.uniq
 		file.close
 		@adjacency  = Array.new(@nodes.size){Array.new(@nodes.size){0}}
 		@edges.each do |link| 
-			@neighbors[link.node1] << link.node2
 			@adjacency[link.node1][link.node2]=1
 		end
 
 		@nodes.each do |node|
-	#		puts "#{node.spin} : #{node.id}"
 			@groups[node.spin] << node.id
 		end
-
+		@nodes.uniq
+		@edges.uniq
 	end
 	
 
